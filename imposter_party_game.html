@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Imposter — Pass the Phone</title>
+  <style>
+    :root{
+      --bg:#0b1020;--panel:#141b2d;--panel2:#1b2540;--text:#f8fafc;--muted:#a8b3cf;
+      --accent:#8b5cf6;--accent2:#22c55e;--danger:#ef4444;--warning:#f59e0b;--line:#2a3658;
+      --shadow:0 18px 55px rgba(0,0,0,.32);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:radial-gradient(circle at top,#18213d 0,#0b1020 48%,#070b14 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:18px}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{width:min(720px,100%);min-height:min(820px,calc(100dvh - 36px));background:rgba(20,27,45,.96);border:1px solid rgba(255,255,255,.07);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+    header{padding:20px 22px 10px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:grid;place-items:center;font-size:24px;box-shadow:0 10px 25px rgba(139,92,246,.35)}
+    h1{font-size:1.15rem;margin:0}.sub{color:var(--muted);font-size:.86rem;margin-top:2px}
+    .pill{border:1px solid var(--line);background:#0f1628;color:var(--muted);padding:8px 10px;border-radius:999px;font-size:.78rem}
+    main{flex:1;padding:10px 22px 24px;display:flex;flex-direction:column}
+    .screen{display:none;flex:1}.screen.active{display:flex;flex-direction:column}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border:1px solid var(--line);border-radius:22px;padding:18px;margin:10px 0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid.three{grid-template-columns:repeat(3,1fr)}
+    @media(max-width:560px){.grid,.grid.three{grid-template-columns:1fr}.app{border-radius:22px}.hide-small{display:none}}
+    label{display:block;font-size:.82rem;color:var(--muted);margin:0 0 7px}
+    input,select{width:100%;background:#0d1425;border:1px solid var(--line);border-radius:14px;color:var(--text);padding:13px 14px;outline:none}
+    input:focus,select:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px rgba(139,92,246,.15)}
+    .btn{border:0;border-radius:15px;padding:14px 16px;font-weight:800;background:var(--accent);color:white;box-shadow:0 10px 24px rgba(139,92,246,.22)}
+    .btn.secondary{background:#202a46;color:#f8fafc;box-shadow:none;border:1px solid var(--line)}
+    .btn.good{background:var(--accent2);box-shadow:0 10px 24px rgba(34,197,94,.2)}
+    .btn.danger{background:var(--danger);box-shadow:0 10px 24px rgba(239,68,68,.18)}
+    .btn.warn{background:var(--warning);color:#19120a;box-shadow:0 10px 24px rgba(245,158,11,.16)}
+    .btn.big{padding:18px;font-size:1.08rem}.btn:disabled{opacity:.5;cursor:not-allowed}
+    .row{display:flex;gap:10px;align-items:center}.row.wrap{flex-wrap:wrap}.spacer{flex:1}
+    .names{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}@media(max-width:520px){.names{grid-template-columns:1fr}}
+    .choice{position:relative;display:block}.choice input{position:absolute;opacity:0;pointer-events:none}.choice span{display:block;border:1px solid var(--line);border-radius:16px;padding:14px;background:#10182b;color:var(--muted);min-height:86px}.choice strong{display:block;color:var(--text);margin-bottom:4px}.choice input:checked+span{border-color:#8b5cf6;background:rgba(139,92,246,.12);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+    .kicker{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:#a78bfa;font-weight:900}.title{font-size:clamp(1.8rem,6vw,3rem);line-height:1.03;margin:8px 0 10px}.muted{color:var(--muted)}
+    .center{text-align:center}.pass{display:grid;place-items:center;flex:1;text-align:center;padding:24px 4px}.avatar{width:110px;height:110px;border-radius:34px;background:linear-gradient(135deg,#263659,#11182a);border:1px solid #39486b;display:grid;place-items:center;font-weight:900;font-size:2rem;margin:0 auto 22px;box-shadow:inset 0 0 30px rgba(255,255,255,.03)}
+    .secret{margin:20px auto 16px;border-radius:24px;border:1px solid var(--line);padding:28px 20px;background:#0d1425;min-height:220px;display:flex;flex-direction:column;justify-content:center}.secret .word{font-size:clamp(2rem,8vw,4rem);font-weight:950;letter-spacing:-.03em;margin:12px 0}.role-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#1d2641;border:1px solid var(--line);font-size:.82rem;font-weight:800}.role-badge.imposter{background:rgba(239,68,68,.11);border-color:rgba(239,68,68,.4);color:#fecaca}
+    .progress{height:8px;background:#0b1221;border-radius:999px;overflow:hidden;margin:10px 0 0}.progress>div{height:100%;background:linear-gradient(90deg,#8b5cf6,#ec4899);width:0}
+    .player-chip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#0e1629;margin:7px 0}.score{font-weight:900;color:#c4b5fd}
+    .rule{padding:12px 14px;border-left:3px solid #8b5cf6;background:#10182a;border-radius:0 12px 12px 0;color:#d5dcf0;margin:8px 0}
+    .huge{font-size:clamp(2.4rem,10vw,5rem);font-weight:950;line-height:1;margin:10px 0}.danger-text{color:#fca5a5}.good-text{color:#86efac}.warn-text{color:#fcd34d}
+    .footer-note{font-size:.78rem;color:#71809f;text-align:center;margin-top:12px}.tiny{font-size:.75rem;color:#8390ae}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#f8fafc;color:#111827;padding:10px 14px;border-radius:999px;font-weight:800;opacity:0;pointer-events:none;transition:.22s;z-index:50;box-shadow:0 12px 30px rgba(0,0,0,.3)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><div class="logo">🕵️</div><div><h1>Imposter</h1><div class="sub">Pass the phone. Trust nobody.</div></div></div>
+    <button id="scoreBtn" class="pill">Scoreboard</button>
+  </header>
+  <main>
+    <section id="setup" class="screen active">
+      <div class="kicker">Game setup</div>
+      <div class="title">Make the lying easier.<br>Make the accusing worse.</div>
+      <div class="card">
+        <div class="grid">
+          <div><label>Players</label><select id="playerCount"></select></div>
+          <div><label>Category</label><select id="categorySelect"><option value="random">🎲 Random category</option></select></div>
+        </div>
+        <div class="names" id="nameInputs"></div>
+      </div>
+      <div class="card">
+        <label>Round type</label>
+        <div class="grid three">
+          <label class="choice"><input type="radio" name="mode" value="classic" checked><span><strong>Classic</strong>One player gets only the category.</span></label>
+          <label class="choice"><input type="radio" name="mode" value="different"><span><strong>Different Word</strong>The odd player gets a related word.</span></label>
+          <label class="choice"><input type="radio" name="mode" value="random"><span><strong>Chaos</strong>Randomly choose either mode.</span></label>
+        </div>
+      </div>
+      <button id="startRound" class="btn big">Start round</button>
+      <div class="footer-note">Everything stays on this device. Works offline after you save this page.</div>
+    </section>
+
+    <section id="pass" class="screen">
+      <div class="pass">
+        <div style="width:100%">
+          <div class="avatar" id="passAvatar">P1</div>
+          <div class="kicker">Pass the phone to</div>
+          <div class="title" id="passName">Player 1</div>
+          <p class="muted">Everyone else: look away. Seriously.</p>
+          <button id="revealBtn" class="btn big" style="width:100%;margin-top:16px">I have the phone — reveal my role</button>
+          <div class="progress"><div id="revealProgress"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reveal" class="screen">
+      <div class="center">
+        <div class="kicker" id="revealPlayer">Player 1</div>
+        <div class="secret">
+          <div id="roleBadge" class="role-badge">You know the word</div>
+          <div class="word" id="secretWord">LIGHTHOUSE</div>
+          <div class="muted" id="secretHelp">Give a clue related to this word without making it obvious.</div>
+        </div>
+        <button id="hideBtn" class="btn big" style="width:100%">Hide it and pass the phone</button>
+        <p class="tiny">Do not screenshot unless you enjoy ruining parties.</p>
+      </div>
+    </section>
+
+    <section id="play" class="screen">
+      <div class="kicker">Everybody has seen their role</div>
+      <div class="title">Start with <span id="starter">Player 4</span>.</div>
+      <div class="card center">
+        <div class="muted">Category</div><div class="huge" style="font-size:clamp(2rem,8vw,4rem)" id="playCategory">Places</div>
+      </div>
+      <div class="rule"><strong>Round 1:</strong> One-word clues only. Go once around the circle.</div>
+      <div class="rule"><strong>Vote:</strong> On 3-2-1, everyone points at one person. No pre-vote courtroom speech.</div>
+      <div class="rule"><strong>If caught:</strong> the impostor gets one guess at the secret word.</div>
+      <button id="resolveBtn" class="btn big" style="margin-top:auto">Resolve the round</button>
+    </section>
+
+    <section id="resolve" class="screen">
+      <div class="kicker">Round result</div>
+      <div class="title">So… who got away with it?</div>
+      <div class="card">
+        <label>What happened?</label>
+        <div class="grid">
+          <button class="btn good outcome" data-outcome="caught">Group caught the impostor</button>
+          <button class="btn danger outcome" data-outcome="escaped">Impostor survived the vote</button>
+          <button class="btn warn outcome" data-outcome="guessed">Caught — but guessed the word</button>
+          <button class="btn secondary outcome" data-outcome="noscore">No score / just reveal</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="muted">The impostor was</div>
+        <div class="huge danger-text" id="imposterReveal">Player 7</div>
+        <div id="wordReveal" class="muted">Secret word: Lighthouse</div>
+      </div>
+      <button id="nextRound" class="btn big">Next round</button>
+    </section>
+
+    <section id="score" class="screen">
+      <div class="row"><div><div class="kicker">Scoreboard</div><div class="title" style="font-size:2rem">Suspiciously competitive</div></div><div class="spacer"></div><button id="closeScore" class="pill">Close</button></div>
+      <div id="scoreList" class="card"></div>
+      <div class="row wrap" style="margin-top:auto"><button id="resetScores" class="btn secondary">Reset scores</button><button id="backSetup" class="btn secondary">Game setup</button></div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const packs = [
+  {c:'Food', pairs:[['Lasagna','Spaghetti'],['Burger','Hotdog'],['Sushi','Sashimi'],['Pizza','Calzone'],['Taco','Burrito'],['Donut','Bagel'],['Pancake','Waffle'],['Curry','Stew'],['Ice cream','Gelato'],['Fries','Onion rings'],['Mango','Pineapple'],['Coffee','Tea']]},
+  {c:'Places', pairs:[['Lighthouse','Watchtower'],['Beach','Desert'],['Airport','Train station'],['Hospital','Clinic'],['Library','Bookstore'],['Mall','Market'],['Cinema','Theatre'],['Gym','Stadium'],['Museum','Gallery'],['Hotel','Resort'],['School','University'],['Zoo','Aquarium']]},
+  {c:'Things', pairs:[['Umbrella','Raincoat'],['Toothbrush','Comb'],['Flashlight','Candle'],['Backpack','Suitcase'],['Key','Lock'],['Spoon','Fork'],['Pillow','Blanket'],['Helmet','Cap'],['Mirror','Window'],['Wallet','Purse'],['Charger','Power bank'],['Scissors','Knife']]},
+  {c:'Animals', pairs:[['Shark','Dolphin'],['Lion','Tiger'],['Eagle','Hawk'],['Frog','Toad'],['Snake','Lizard'],['Penguin','Puffin'],['Wolf','Fox'],['Horse','Donkey'],['Crocodile','Alligator'],['Bee','Wasp'],['Octopus','Squid'],['Rabbit','Hare']]},
+  {c:'Entertainment', pairs:[['Batman','Superman'],['Harry Potter','Gandalf'],['Mario','Sonic'],['Godzilla','King Kong'],['Star Wars','Star Trek'],['Netflix','YouTube'],['Karaoke','Concert'],['Chess','Checkers'],['Horror','Thriller'],['Anime','Cartoon'],['Podcast','Radio'],['PlayStation','Nintendo']]},
+  {c:'Jobs', pairs:[['Doctor','Nurse'],['Teacher','Professor'],['Chef','Baker'],['Pilot','Captain'],['Lawyer','Judge'],['Police officer','Security guard'],['Mechanic','Engineer'],['Barber','Hairdresser'],['Photographer','Videographer'],['Farmer','Gardener'],['Waiter','Bartender'],['Actor','Singer']]},
+  {c:'Travel', pairs:[['Passport','Visa'],['Plane','Helicopter'],['Taxi','Bus'],['Hotel','Hostel'],['Island','Mountain'],['Suitcase','Backpack'],['Map','Compass'],['Cruise','Ferry'],['Temple','Church'],['Souvenir','Postcard'],['Tourist','Guide'],['Road trip','Flight']]},
+  {c:'Everyday', pairs:[['Monday','Friday'],['Morning','Night'],['Hot','Cold'],['Rain','Snow'],['Birthday','Wedding'],['Shower','Bath'],['Texting','Calling'],['Work','School'],['Breakfast','Dinner'],['Elevator','Escalator'],['Cash','Card'],['Shoes','Slippers']]}
+];
+
+const $ = id => document.getElementById(id);
+const screens=[...document.querySelectorAll('.screen')];
+let state={players:[],scores:{},round:null,revealIndex:0,previousScreen:'setup',outcomeScored:false};
+
+function show(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));window.scrollTo(0,0)}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function initials(name){return name.split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase()||'P'}
+function save(){localStorage.setItem('imposterScores',JSON.stringify(state.scores));localStorage.setItem('imposterPlayers',JSON.stringify(state.players))}
+function load(){try{state.scores=JSON.parse(localStorage.getItem('imposterScores'))||{};const p=JSON.parse(localStorage.getItem('imposterPlayers'));if(Array.isArray(p)&&p.length>=3) state.players=p}catch(e){}}
+
+for(let i=3;i<=16;i++){const o=document.createElement('option');o.value=i;o.textContent=i;$('playerCount').appendChild(o)}
+$('playerCount').value=10;
+packs.forEach(p=>{const o=document.createElement('option');o.value=p.c;o.textContent=p.c;$('categorySelect').appendChild(o)});
+
+function renderNameInputs(){const n=+$('playerCount').value;$('nameInputs').innerHTML='';for(let i=0;i<n;i++){const inp=document.createElement('input');inp.placeholder=`Player ${i+1}`;inp.value=state.players[i]||'';inp.dataset.idx=i;$('nameInputs').appendChild(inp)}}
+$('playerCount').addEventListener('change',renderNameInputs);renderNameInputs();load();if(state.players.length){$('playerCount').value=Math.min(16,Math.max(3,state.players.length));renderNameInputs()}
+
+function collectPlayers(){const vals=[...$('nameInputs').querySelectorAll('input')].map((x,i)=>x.value.trim()||`Player ${i+1}`);state.players=vals;vals.forEach(n=>{if(!(n in state.scores))state.scores[n]=0});save();return vals}
+function selectedMode(){return document.querySelector('input[name=mode]:checked').value}
+function buildRound(){
+  const players=collectPlayers();
+  let pack=$('categorySelect').value==='random'?packs[Math.floor(Math.random()*packs.length)]:packs.find(p=>p.c===$('categorySelect').value);
+  const pair=pack.pairs[Math.floor(Math.random()*pack.pairs.length)];
+  let mode=selectedMode();if(mode==='random')mode=Math.random()<.5?'classic':'different';
+  const imposter=Math.floor(Math.random()*players.length);
+  const starter=Math.floor(Math.random()*players.length);
+  const order=players.map((name,i)=>({name,i}));
+  state.round={pack,pair,mode,imposter,starter,order};state.revealIndex=0;state.outcomeScored=false;
+  prepPass();
+}
+function prepPass(){const p=state.round.order[state.revealIndex];$('passName').textContent=p.name;$('passAvatar').textContent=initials(p.name);$('revealProgress').style.width=`${(state.revealIndex/state.round.order.length)*100}%`;show('pass')}
+$('startRound').addEventListener('click',buildRound);
+$('revealBtn').addEventListener('click',()=>{
+  const p=state.round.order[state.revealIndex];const isImp=p.i===state.round.imposter;const classic=state.round.mode==='classic';
+  $('revealPlayer').textContent=p.name;
+  $('roleBadge').className='role-badge'+(isImp?' imposter':'');
+  if(isImp&&classic){$('roleBadge').textContent='YOU’RE THE IMPOSTOR';$('secretWord').textContent=`Category: ${state.round.pack.c}`;$('secretHelp').textContent='You do not know the word. Blend in, listen carefully, and try not to go first.'}
+  else if(isImp){$('roleBadge').className='role-badge';$('roleBadge').textContent='YOUR WORD';$('secretWord').textContent=state.round.pair[1];$('secretHelp').textContent='Give a one-word clue related to this word. You may or may not be the odd player.'}
+  else{$('roleBadge').textContent='YOU KNOW THE WORD';$('secretWord').textContent=state.round.pair[0];$('secretHelp').textContent='Give a one-word clue that proves you know it without handing it to the impostor.'}
+  show('reveal')
+});
+$('hideBtn').addEventListener('click',()=>{state.revealIndex++;if(state.revealIndex<state.round.order.length){prepPass()}else{const r=state.round;$('starter').textContent=r.order[r.starter].name;$('playCategory').textContent=r.pack.c;show('play')}});
+$('resolveBtn').addEventListener('click',()=>{
+  const r=state.round;$('imposterReveal').textContent=r.order[r.imposter].name;
+  $('wordReveal').textContent=r.mode==='classic'?`Secret word: ${r.pair[0]}`:`Main word: ${r.pair[0]} • Odd word: ${r.pair[1]}`;
+  show('resolve')
+});
+
+document.querySelectorAll('.outcome').forEach(btn=>btn.addEventListener('click',()=>{
+  if(state.outcomeScored){toast('Result already recorded');return}
+  state.outcomeScored=true;
+  const outcome=btn.dataset.outcome;const r=state.round;const imp=r.order[r.imposter].name;
+  if(outcome==='caught'){
+    state.players.forEach((n,i)=>{if(i!==r.imposter)state.scores[n]=(state.scores[n]||0)+1});toast('Group +1 each');
+  } else if(outcome==='escaped') {state.scores[imp]=(state.scores[imp]||0)+2;toast(`${imp} +2`)}
+  else if(outcome==='guessed') {state.scores[imp]=(state.scores[imp]||0)+1;toast(`${imp} +1 for the steal`)}
+  else toast('No score added');
+  save();document.querySelectorAll('.outcome').forEach(b=>b.disabled=true);
+}));
+$('nextRound').addEventListener('click',()=>show('setup'));
+
+function renderScores(){
+  const rows=state.players.length?state.players:Object.keys(state.scores);
+  const sorted=[...rows].sort((a,b)=>(state.scores[b]||0)-(state.scores[a]||0));
+  $('scoreList').innerHTML=sorted.length?sorted.map((n,i)=>`<div class="player-chip"><span>${i+1}. ${escapeHtml(n)}</span><span class="score">${state.scores[n]||0} pts</span></div>`).join(''):'<div class="muted">No scores yet.</div>';
+}
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+$('scoreBtn').addEventListener('click',()=>{state.previousScreen=screens.find(s=>s.classList.contains('active'))?.id||'setup';renderScores();show('score')});
+$('closeScore').addEventListener('click',()=>show(state.previousScreen));
+$('resetScores').addEventListener('click',()=>{if(confirm('Reset all scores?')){Object.keys(state.scores).forEach(k=>state.scores[k]=0);save();renderScores();toast('Scores reset')}});
+$('backSetup').addEventListener('click',()=>show('setup'));
+</script>
+</body>
+</html>
